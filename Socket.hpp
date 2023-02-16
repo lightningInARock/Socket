@@ -110,13 +110,14 @@ public:
 	}
 
 	std::string Read(const unsigned int size) {
-		std::string buff(size, 0);
+		// std::string buff(size, 0);
+		char buff[size];
 		int n = read(_fd, &buff[0], size);
 		if(n < 0) {
 			throw SocketException("Error reading from socket");	
 		}
 
-		return buff;
+		return std::string(buff, n);
 	}
 
 	int Write(const std::string msg) {
