@@ -39,6 +39,9 @@ class Socket {
 public:
 	Socket() : _fd(-1), _port(-1), _dmn(-1), _tp(-1), _addr{0} {}
 
+	Socket(const Socket& s) : _fd(s._fd), _port(s._port),
+   		_dmn(s._dmn), _tp(s._tp), _addr{s._addr} {}
+	
 	Socket(int domain, int type, int protocol = 0)
 		: _fd(-1), _port(-1), _addr{0} 
 	{
@@ -92,7 +95,7 @@ public:
 		listen(_fd, 5);
 	}
 
-	Socket Accept() {
+	Socket* Accept() {
 		sockaddr_in cli_addr;
 		socklen_t clilen = sizeof(clilen);
 		int n_sock_fd = accept(_fd, (sockaddr*)&cli_addr, &clilen);
@@ -100,11 +103,11 @@ public:
 			throw SocketException("Error accepting connection");
 		}
 
-		Socket sock(n_sock_fd);
-		sock._tp = _tp;
-		sock._dmn = _dmn;
-		sock._addr = _addr;
-		sock._port = _port;
+		Socket* sock = new Socket(n_sock_fd);
+		sock->_tp = _tp;
+		sock->_dmn = _dmn;
+		sock->_addr = _addr;
+		sock->_port = _port;
 
 		return sock;
 	}
